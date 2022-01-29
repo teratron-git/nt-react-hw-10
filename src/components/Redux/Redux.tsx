@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react"
-import { connect } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { v4 as uuidv4 } from "uuid"
-import { actions } from "../../store/main/actions"
-import { getData } from "../../store/main/selectors"
+import { RootState } from "../../store"
+import { deleteData, edit, save } from "../../store/mainSlice"
 import st from "./Redux.module.css"
 
 interface IResultItem {
@@ -11,7 +11,7 @@ interface IResultItem {
   price: number | string
 }
 
-const Redux = (props: any) => {
+const Redux = () => {
   const [filter, setFilter] = useState<string>("")
   const [selectedId, setSelectedId] = useState<string>("")
   const [selectedName, setSelectedName] = useState<string>("")
@@ -19,9 +19,12 @@ const Redux = (props: any) => {
   const [isEdit, setIsEdit] = useState<boolean>(false)
   const [resultData, setResultData] = useState<IResultItem[]>([])
 
+  const dispatch = useDispatch()
+  const data = useSelector((state: RootState) => state.main.data)
+
   useEffect(() => {
-    filter ? setResultData([...props.data.filter((item: any) => item?.name?.includes(filter))]) : setResultData(props.data)
-  }, [props.data, filter])
+    filter ? setResultData([...data.filter((item: any) => item?.name?.includes(filter))]) : setResultData(data)
+  }, [data, filter])
 
   const reset = () => {
     setSelectedId("")
@@ -33,8 +36,8 @@ const Redux = (props: any) => {
   const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     isEdit
-      ? props.edit({ id: selectedId, name: selectedName, price: selectedPrice })
-      : props.save({ id: uuidv4(), name: selectedName, price: selectedPrice })
+      ? dispatch(edit({ id: selectedId, name: selectedName, price: selectedPrice as number }))
+      : dispatch(save({ id: uuidv4(), name: selectedName, price: selectedPrice as number }))
     reset()
   }
 
@@ -51,7 +54,7 @@ const Redux = (props: any) => {
   }
 
   const deleteHandler = (id: string) => {
-    props.deleteData(id)
+    dispatch(deleteData({ id }))
   }
 
   const editHandler = ({ id, name, price }: IResultItem) => {
@@ -102,7 +105,7 @@ const Redux = (props: any) => {
               <span>Действия</span>
             </li>
 
-            {resultData.map((item) => (
+            {resultData?.map((item) => (
               <div key={item.id} className={st.resultItem}>
                 <li>
                   <span>{item.name}</span>
@@ -121,16 +124,4 @@ const Redux = (props: any) => {
   )
 }
 
-const mapStateToProps = (state: any) => {
-  return {
-    data: getData(state),
-  }
-}
-
-const mapDispatchToProps = (dispatch: any) => ({
-  save: (payload: any) => dispatch(actions.save(payload)),
-  edit: (payload: any) => dispatch(actions.edit(payload)),
-  deleteData: (payload: any) => dispatch(actions.deleteData(payload)),
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(Redux)
+export default Redux
