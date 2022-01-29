@@ -19,7 +19,7 @@ const TaskSwitcher = ({ task, onChangeHandler }: IProps) => {
       }}
     >
       <input type="radio" id="choice1" name="task" value="1" defaultChecked={task === "1"} onChange={onChangeHandler} />
-      <label htmlFor="choice1">Task1 (Steps)</label>
+      <label htmlFor="choice1">Task1&2 (Redux)</label>
       <br />
       {/* <input type="radio" id="choice2" name="task" value="2" defaultChecked={task === "2"} onChange={onChangeHandler} />
       <label htmlFor="choice2">Task2 (Steps)</label> */}

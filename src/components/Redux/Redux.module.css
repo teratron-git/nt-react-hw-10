@@ -75,3 +75,9 @@ input::-webkit-inner-spin-button {
 i {
   cursor: pointer;
 }
+
+.filterItem {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
